@@ -6,11 +6,11 @@ const HoloStudio = lazy(() => import("@/components/HoloStudio"));
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Visionary — Live Video to Real-Time 3D Reconstruction" },
+      { title: "Visionary — Powered By CNN (Conventional Neural Network)" },
       {
         name: "description",
         content:
-          "Turn any camera feed into a live 3D model. Every frame is rebuilt as 3D geometry in the browser, with real-time mouth sync and motion sync.",
+          "Visionary.",
       },
       {
         property: "og:title",
@@ -36,11 +36,11 @@ function Index() {
       <div className="relative mx-auto w-full max-w-6xl px-5 py-10 sm:px-8 sm:py-16">
         <header className="mb-8 sm:mb-12">
           <span className="font-mono text-[11px] uppercase tracking-[0.4em] text-accent">
-            Visionary · on-device neural capture
+            Visionary · Neural model 
           </span>
           <h1 className="mt-4 max-w-3xl text-3xl font-semibold leading-[1.08] tracking-tight text-foreground sm:text-5xl">
             Every frame of your video feed,{" "}
-            <span className="text-gradient">rebuilt in 3D as it happens.</span>
+            <span className="text-gradient">Renders</span>
           </h1>
           <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted-foreground sm:text-base">
             A neural model reads the camera stream frame by frame and reconstructs
@@ -67,20 +67,7 @@ function Index() {
           </Suspense>
         </ClientOnly>
 
-        <section className="mt-10 grid gap-4 sm:grid-cols-3">
-          {[
-            {
-              t: "Frame-accurate mesh",
-              d: "Each incoming frame produces its own 3D point cloud and wireframe — no interpolated placeholder avatar.",
-            },
-            {
-              t: "Mouth sync",
-              d: "Jaw, lip and smile signals are extracted per frame, so speech drives the mesh with no perceptible lag.",
-            },
-            {
-              t: "Motion sync",
-              d: "A metric-space body skeleton follows head turns, shoulders, arms and hips as you move.",
-            },
+    .
           ].map((f) => (
             <article key={f.t} className="panel p-5">
               <h3 className="font-mono text-xs uppercase tracking-[0.2em] text-accent">
@@ -94,7 +81,7 @@ function Index() {
         </section>
 
         <p className="mt-10 font-mono text-[11px] uppercase tracking-[0.25em] text-muted-foreground">
-          Runs fully on your device · no frames leave the browser
+      
         </p>
       </div>
     </main>
