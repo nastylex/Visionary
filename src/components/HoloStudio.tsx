@@ -370,6 +370,23 @@ export default function HoloStudio() {
           <Stat k="Faces" v={metrics.faces ? `${metrics.faces} locked` : "—"} />
         </dl>
 
+        <div className="flex items-center gap-4 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+          <span className="flex items-center gap-1.5">
+            <span
+              className="h-2 w-2 rounded-full"
+              style={{ background: "#7dfcd2" }}
+            />
+            person 1
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span
+              className="h-2 w-2 rounded-full"
+              style={{ background: "#c9a8ff" }}
+            />
+            person 2
+          </span>
+        </div>
+
         <div className="mt-auto flex flex-col gap-2">
           {status === "live" ? (
             <button className="btn-ghost" onClick={stop}>
