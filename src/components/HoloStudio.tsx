@@ -367,7 +367,7 @@ export default function HoloStudio() {
         <dl className="grid grid-cols-2 gap-3 border-t border-border/60 pt-4 font-mono text-xs">
           <Stat k="Vertices" v={metrics.points.toString()} />
           <Stat k="Frame rate" v={`${metrics.fps} fps`} />
-          <Stat k="Face" v={metrics.face ? "locked" : "—"} />
+          <Stat k="Faces" v={metrics.faces ? `${metrics.faces} locked` : "—"} />
         </dl>
 
         <div className="mt-auto flex flex-col gap-2">
