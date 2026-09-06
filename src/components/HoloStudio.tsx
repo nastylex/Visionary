@@ -250,7 +250,8 @@ export default function HoloStudio() {
           const lm = faceRes?.faceLandmarks?.[0];
           if (lm && lm.length) {
             for (let i = 0; i < FACE_N; i++) {
-              const p = lm[i] ?? lm[lm.length - 1];
+              const p = lm[i];
+              if (!p) continue;
               facePos.setXYZ(
                 i,
                 -(p.x - 0.5) * 4.2,
@@ -287,6 +288,7 @@ export default function HoloStudio() {
           if (world && world.length) {
             for (let i = 0; i < POSE_N; i++) {
               const p = world[i];
+              if (!p) continue;
               posePos.setXYZ(i, -p.x * 3.4, -p.y * 3.4 - 0.2, -p.z * 3.4);
             }
             posePos.needsUpdate = true;
