@@ -6,7 +6,7 @@ const HoloStudio = lazy(() => import("@/components/HoloStudio"));
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Volumetrix — Live Video to Real-Time 3D Reconstruction" },
+      { title: "Visionary — Live Video to Real-Time 3D Reconstruction" },
       {
         name: "description",
         content:
@@ -14,7 +14,7 @@ export const Route = createFileRoute("/")({
       },
       {
         property: "og:title",
-        content: "Volumetrix — Live Video to Real-Time 3D Reconstruction",
+        content: "Visionary — Live Video to Real-Time 3D Reconstruction",
       },
       {
         property: "og:description",
