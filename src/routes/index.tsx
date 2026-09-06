@@ -6,20 +6,20 @@ const HoloStudio = lazy(() => import("@/components/HoloStudio"));
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Visionary — Powered By CNN (Conventional Neural Network)" },
+      { title: "Visionary — Neural Model" },
       {
         name: "description",
         content:
-          "Visionary.",
+          "Turn any camera feed into a live 3D model. Every frame is rebuilt as 3D geometry in the browser, with real-time mouth sync and motion sync.",
       },
       {
         property: "og:title",
-        content: "Visionary — Live Video to Real-Time 3D Reconstruction",
+        content: "Visionary — Neural Model",
       },
       {
         property: "og:description",
         content:
-          "Every frame of your camera feed rebuilt as live 3D geometry, with real-time mouth and motion sync.",
+          "By NastyLex and RychTech.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -36,14 +36,14 @@ function Index() {
       <div className="relative mx-auto w-full max-w-6xl px-5 py-10 sm:px-8 sm:py-16">
         <header className="mb-8 sm:mb-12">
           <span className="font-mono text-[11px] uppercase tracking-[0.4em] text-accent">
-            Visionary · Neural model 
+            Visionary · Neural Model 
           </span>
           <h1 className="mt-4 max-w-3xl text-3xl font-semibold leading-[1.08] tracking-tight text-foreground sm:text-5xl">
             Every frame of your video feed,{" "}
-            <span className="text-gradient">Renders</span>
+            <span className="text-gradient">rebuilt as it happens.</span>
           </h1>
           <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted-foreground sm:text-base">
-            A neural model reads the camera stream frame by frame and reconstructs
+            The Visionary neural model reads the camera stream frame by frame and reconstructs
             a live volumetric mesh — 478 facial vertices per face, with mouth
             movement and motion tracked in real time.
           </p>
@@ -52,14 +52,14 @@ function Index() {
         <ClientOnly
           fallback={
             <div className="panel flex aspect-[4/3] items-center justify-center font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground lg:aspect-[16/10]">
-              preparing viewport
+              handshaking RychTech
             </div>
           }
         >
           <Suspense
             fallback={
               <div className="panel flex aspect-[4/3] items-center justify-center font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground lg:aspect-[16/10]">
-                loading engine
+                Handing shaking Nastylex
               </div>
             }
           >
@@ -67,7 +67,20 @@ function Index() {
           </Suspense>
         </ClientOnly>
 
-    .
+        <section className="mt-10 grid gap-4 sm:grid-cols-3">
+          {[
+            {
+              t: "Frame Accurate",
+              d: "Each incoming frame produces its own 3D wireframe — no interpolated scan.",
+            },
+            {
+              t: "Mouth sync",
+              d: "Fluid Rendering depends on Cache and GPU performance.",
+            },
+            {
+              t: "Powered By CNN",
+              d: "Co-authored By Nastylex.",
+            },
           ].map((f) => (
             <article key={f.t} className="panel p-5">
               <h3 className="font-mono text-xs uppercase tracking-[0.2em] text-accent">
@@ -81,7 +94,7 @@ function Index() {
         </section>
 
         <p className="mt-10 font-mono text-[11px] uppercase tracking-[0.25em] text-muted-foreground">
-      
+          NastyLex · RychTech
         </p>
       </div>
     </main>
