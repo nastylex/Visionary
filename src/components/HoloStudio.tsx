@@ -4,16 +4,12 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import {
   FaceLandmarker,
   FilesetResolver,
-  PoseLandmarker,
   type FaceLandmarkerResult,
-  type PoseLandmarkerResult,
 } from "@mediapipe/tasks-vision";
 
 const WASM = "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@1.0.1/wasm";
 const FACE_MODEL =
   "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task";
-const POSE_MODEL =
-  "https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task";
 
 type Status = "idle" | "loading" | "live" | "error";
 
@@ -24,7 +20,6 @@ type Metrics = {
   smile: number;
   blink: number;
   face: boolean;
-  body: boolean;
 };
 
 const EMPTY: Metrics = {
@@ -34,7 +29,6 @@ const EMPTY: Metrics = {
   smile: 0,
   blink: 0,
   face: false,
-  body: false,
 };
 
 
@@ -88,20 +82,13 @@ export default function HoloStudio() {
       await video.play();
 
       const fileset = await FilesetResolver.forVisionTasks(WASM);
-      const [faceLandmarker, poseLandmarker] = await Promise.all([
-        FaceLandmarker.createFromOptions(fileset, {
-          baseOptions: { modelAssetPath: FACE_MODEL, delegate: "GPU" },
-          runningMode: "VIDEO",
-          numFaces: 1,
-          outputFaceBlendshapes: true,
-          outputFacialTransformationMatrixes: true,
-        }),
-        PoseLandmarker.createFromOptions(fileset, {
-          baseOptions: { modelAssetPath: POSE_MODEL, delegate: "GPU" },
-          runningMode: "VIDEO",
-          numPoses: 1,
-        }),
-      ]);
+      const faceLandmarker = await FaceLandmarker.createFromOptions(fileset, {
+        baseOptions: { modelAssetPath: FACE_MODEL, delegate: "GPU" },
+        runningMode: "VIDEO",
+        numFaces: 1,
+        outputFaceBlendshapes: true,
+        outputFacialTransformationMatrixes: true,
+      });
 
       /* ---------- three.js scene ---------- */
       const scene = new THREE.Scene();
@@ -202,10 +189,8 @@ export default function HoloStudio() {
           const ts = now;
 
           let faceRes: FaceLandmarkerResult | null = null;
-          let poseRes: PoseLandmarkerResult | null = null;
           try {
             faceRes = faceLandmarker.detectForVideo(video, ts);
-            poseRes = poseLandmarker.detectForVideo(video, ts);
           } catch {
             /* frame dropped */
           }
@@ -272,7 +257,6 @@ export default function HoloStudio() {
         window.removeEventListener("resize", onResize);
         controls.dispose();
         faceLandmarker.close();
-        poseLandmarker.close();
         renderer.dispose();
         if (renderer.domElement.parentNode === mount)
           mount.removeChild(renderer.domElement);
@@ -349,7 +333,6 @@ export default function HoloStudio() {
           <Stat k="Vertices" v={metrics.points.toString()} />
           <Stat k="Frame rate" v={`${metrics.fps} fps`} />
           <Stat k="Face" v={metrics.face ? "locked" : "—"} />
-          <Stat k="Body" v={metrics.body ? "locked" : "—"} />
         </dl>
 
         <div className="mt-auto flex flex-col gap-2">
