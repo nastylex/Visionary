@@ -127,51 +127,59 @@ export default function HoloStudio() {
       scene.add(grid);
 
       const FACE_N = 478;
-      const faceGeom = new THREE.BufferGeometry();
-      faceGeom.setAttribute(
-        "position",
-        new THREE.BufferAttribute(new Float32Array(FACE_N * 3), 3),
-      );
-      const facePoints = new THREE.Points(
-        faceGeom,
-        new THREE.PointsMaterial({
-          color: 0x7dfcd2,
-          size: 0.022,
-          transparent: true,
-          opacity: 0.95,
-        }),
-      );
-      scene.add(facePoints);
 
-      const tess = FaceLandmarker.FACE_LANDMARKS_TESSELATION;
       const meshIndex: number[] = [];
-      tess.forEach((c) => meshIndex.push(c.start, c.end));
-      const wireGeom = new THREE.BufferGeometry();
-      wireGeom.setAttribute("position", faceGeom.getAttribute("position"));
-      wireGeom.setIndex(meshIndex);
-      const faceWire = new THREE.LineSegments(
-        wireGeom,
-        new THREE.LineBasicMaterial({
-          color: 0x2ee6a8,
-          transparent: true,
-          opacity: 0.32,
-        }),
+      FaceLandmarker.FACE_LANDMARKS_TESSELATION.forEach((c) =>
+        meshIndex.push(c.start, c.end),
       );
-      scene.add(faceWire);
-
       const lipsIndex: number[] = [];
       FaceLandmarker.FACE_LANDMARKS_LIPS.forEach((c) =>
         lipsIndex.push(c.start, c.end),
       );
-      const lipsGeom = new THREE.BufferGeometry();
-      lipsGeom.setAttribute("position", faceGeom.getAttribute("position"));
-      lipsGeom.setIndex(lipsIndex);
-      const lips = new THREE.LineSegments(
-        lipsGeom,
-        new THREE.LineBasicMaterial({ color: 0xffb17a }),
-      );
-      scene.add(lips);
 
+      const rigs = PALETTE.slice(0, MAX_FACES).map((c) => {
+        const geom = new THREE.BufferGeometry();
+        geom.setAttribute(
+          "position",
+          new THREE.BufferAttribute(new Float32Array(FACE_N * 3), 3),
+        );
+        const points = new THREE.Points(
+          geom,
+          new THREE.PointsMaterial({
+            color: c.points,
+            size: 0.022,
+            transparent: true,
+            opacity: 0.95,
+          }),
+        );
+        const wireGeom = new THREE.BufferGeometry();
+        wireGeom.setAttribute("position", geom.getAttribute("position"));
+        wireGeom.setIndex(meshIndex);
+        const wire = new THREE.LineSegments(
+          wireGeom,
+          new THREE.LineBasicMaterial({
+            color: c.wire,
+            transparent: true,
+            opacity: 0.32,
+          }),
+        );
+        const lipsGeom = new THREE.BufferGeometry();
+        lipsGeom.setAttribute("position", geom.getAttribute("position"));
+        lipsGeom.setIndex(lipsIndex);
+        const lips = new THREE.LineSegments(
+          lipsGeom,
+          new THREE.LineBasicMaterial({ color: c.points }),
+        );
+        scene.add(points, wire, lips);
+        return {
+          geom,
+          pos: geom.getAttribute("position") as THREE.BufferAttribute,
+          points,
+          wire,
+          lips,
+          lipsBase: c.lips,
+        };
+      });
 
       const onResize = () => {
         if (!mount.clientWidth) return;
@@ -182,7 +190,6 @@ export default function HoloStudio() {
       window.addEventListener("resize", onResize);
 
       /* ---------- per-frame reconstruction ---------- */
-      const facePos = faceGeom.getAttribute("position") as THREE.BufferAttribute;
       let lastVideoTime = -1;
       let frames = 0;
       let fpsMark = performance.now();
@@ -204,46 +211,65 @@ export default function HoloStudio() {
             /* frame dropped */
           }
 
-          const lm = faceRes?.faceLandmarks?.[0];
-          if (lm && lm.length) {
+          let detected = 0;
+
+          rigs.forEach((rig, idx) => {
+            const lm = faceRes?.faceLandmarks?.[idx];
+            const ok = !!lm && lm.length > 0;
+            rig.points.visible = ok;
+            rig.wire.visible = ok;
+            rig.lips.visible = ok;
+            if (!ok || !lm) return;
+            detected++;
+
             for (let i = 0; i < FACE_N; i++) {
               const p = lm[i];
               if (!p) continue;
-              facePos.setXYZ(
+              rig.pos.setXYZ(
                 i,
                 -(p.x - 0.5) * 4.2,
                 -(p.y - 0.5) * 4.2,
                 -p.z * 4.2,
               );
             }
-            facePos.needsUpdate = true;
-            faceGeom.computeBoundingSphere();
-            live.face = true;
-            live.points = FACE_N;
-            live.mouth = shape(faceRes!, "jawOpen");
-            live.smile =
-              (shape(faceRes!, "mouthSmileLeft") +
-                shape(faceRes!, "mouthSmileRight")) /
+            rig.pos.needsUpdate = true;
+            rig.geom.computeBoundingSphere();
+
+            const mouth = shape(faceRes!, idx, "jawOpen");
+            const smile =
+              (shape(faceRes!, idx, "mouthSmileLeft") +
+                shape(faceRes!, idx, "mouthSmileRight")) /
               2;
-            live.blink =
-              (shape(faceRes!, "eyeBlinkLeft") + shape(faceRes!, "eyeBlinkRight")) /
+            const blink =
+              (shape(faceRes!, idx, "eyeBlinkLeft") +
+                shape(faceRes!, idx, "eyeBlinkRight")) /
               2;
-            const m = 1 + live.mouth * 0.9;
-            (lips.material as THREE.LineBasicMaterial).color.setRGB(
-              1,
-              0.7 - live.mouth * 0.45,
-              0.48 - live.mouth * 0.4,
+
+            const [lr, lg, lb] = rig.lipsBase;
+            (rig.lips.material as THREE.LineBasicMaterial).color.setRGB(
+              Math.min(1, lr + mouth * 0.25),
+              Math.max(0, lg - mouth * 0.45),
+              Math.max(0, lb - mouth * 0.4),
             );
-            lips.scale.setScalar(1);
-            (facePoints.material as THREE.PointsMaterial).size =
-              0.02 + live.mouth * 0.006 * m;
-          } else {
-            live.face = false;
+            (rig.points.material as THREE.PointsMaterial).size =
+              0.02 + mouth * 0.006 * (1 + mouth * 0.9);
+
+            if (idx === 0) {
+              live.mouth = mouth;
+              live.smile = smile;
+              live.blink = blink;
+            }
+          });
+
+          live.faces = detected;
+          live.face = detected > 0;
+          live.points = detected * FACE_N;
+          if (!detected) {
+            live.mouth = 0;
+            live.smile = 0;
+            live.blink = 0;
           }
 
-          facePoints.visible = live.face;
-          faceWire.visible = live.face;
-          lips.visible = live.face;
 
           frames++;
           if (now - fpsMark > 500) {
