@@ -94,7 +94,7 @@ export default function HoloStudio() {
       const faceLandmarker = await FaceLandmarker.createFromOptions(fileset, {
         baseOptions: { modelAssetPath: FACE_MODEL, delegate: "GPU" },
         runningMode: "VIDEO",
-        numFaces: 1,
+        numFaces: MAX_FACES,
         outputFaceBlendshapes: true,
         outputFacialTransformationMatrixes: true,
       });
