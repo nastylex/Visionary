@@ -316,27 +316,22 @@
   height: 0.45rem;
   border-radius: 999px;
   background: var(--color-primary);
+  --pulse-color: oklch(0.15 0 0);
   animation: vx-pulse 1.4s ease-in-out infinite;
+}
+
+.dark .pulse-dot {
+  --pulse-color: oklch(1 0 0);
 }
 
 @keyframes vx-pulse {
   0%,
   100% {
     opacity: 1;
-    box-shadow: 0 0 0 0 oklch(0.15 0 0 / 0.55);
+    box-shadow: 0 0 0 0 oklch(from var(--pulse-color) l c h / 0.55);
   }
   50% {
     opacity: 0.45;
-    box-shadow: 0 0 0 0.35rem oklch(0.15 0 0 / 0);
-  }
-}
-
-.dark @keyframes vx-pulse {
-  0%,
-  100% {
-    box-shadow: 0 0 0 0 oklch(1 0 0 / 0.55);
-  }
-  50% {
-    box-shadow: 0 0 0 0.35rem oklch(1 0 0 / 0);
+    box-shadow: 0 0 0 0.35rem oklch(from var(--pulse-color) l c h / 0);
   }
 }
