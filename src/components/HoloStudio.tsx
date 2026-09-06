@@ -37,22 +37,6 @@ const EMPTY: Metrics = {
   body: false,
 };
 
-const POSE_BONES: [number, number][] = [
-  [11, 12],
-  [11, 13],
-  [13, 15],
-  [12, 14],
-  [14, 16],
-  [11, 23],
-  [12, 24],
-  [23, 24],
-  [23, 25],
-  [25, 27],
-  [24, 26],
-  [26, 28],
-  [27, 31],
-  [28, 32],
-];
 
 function shape(res: FaceLandmarkerResult, name: string) {
   const cats = res.faceBlendshapes?.[0]?.categories;
@@ -192,26 +176,6 @@ export default function HoloStudio() {
       );
       scene.add(lips);
 
-      const POSE_N = 33;
-      const poseGeom = new THREE.BufferGeometry();
-      poseGeom.setAttribute(
-        "position",
-        new THREE.BufferAttribute(new Float32Array(POSE_N * 3), 3),
-      );
-      const poseJoints = new THREE.Points(
-        poseGeom,
-        new THREE.PointsMaterial({ color: 0x8ab4ff, size: 0.075 }),
-      );
-      const boneGeom = new THREE.BufferGeometry();
-      boneGeom.setAttribute("position", poseGeom.getAttribute("position"));
-      boneGeom.setIndex(POSE_BONES.flat());
-      const bones = new THREE.LineSegments(
-        boneGeom,
-        new THREE.LineBasicMaterial({ color: 0x4d8dff, linewidth: 2 }),
-      );
-      const body = new THREE.Group();
-      body.add(poseJoints, bones);
-      scene.add(body);
 
       const onResize = () => {
         if (!mount.clientWidth) return;
@@ -223,7 +187,6 @@ export default function HoloStudio() {
 
       /* ---------- per-frame reconstruction ---------- */
       const facePos = faceGeom.getAttribute("position") as THREE.BufferAttribute;
-      const posePos = poseGeom.getAttribute("position") as THREE.BufferAttribute;
       let lastVideoTime = -1;
       let frames = 0;
       let fpsMark = performance.now();
@@ -284,21 +247,6 @@ export default function HoloStudio() {
             live.face = false;
           }
 
-          const world = poseRes?.worldLandmarks?.[0];
-          if (world && world.length) {
-            for (let i = 0; i < POSE_N; i++) {
-              const p = world[i];
-              if (!p) continue;
-              posePos.setXYZ(i, -p.x * 3.4, -p.y * 3.4 - 0.2, -p.z * 3.4);
-            }
-            posePos.needsUpdate = true;
-            poseGeom.computeBoundingSphere();
-            live.body = true;
-            live.points += POSE_N;
-          } else {
-            live.body = false;
-          }
-          body.visible = live.body;
           facePoints.visible = live.face;
           faceWire.visible = live.face;
           lips.visible = live.face;
