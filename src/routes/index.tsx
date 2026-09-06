@@ -79,7 +79,7 @@ function Index() {
             },
             {
               t: "Powered By CNN",
-              d: "Co-authored By Nastylex.",
+              d: "Co-authored By Nastylex and RychTech.",
             },
           ].map((f) => (
             <article key={f.t} className="panel p-5">
