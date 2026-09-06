@@ -36,7 +36,7 @@ const EMPTY: Metrics = {
 const MAX_FACES = 2;
 
 const PALETTE = [
-  { points: 0x7dfcd2, wire: 0x2ee6a8, lips: [1, 0.7, 0.48] as const },
+  { points: 0xff4d6d, wire: 0xff1f4b, lips: [1, 0.25, 0.3] as const },
   { points: 0xc9a8ff, wire: 0x8f6bff, lips: [0.75, 0.55, 1] as const },
 ];
 
@@ -374,7 +374,7 @@ export default function HoloStudio() {
           <span className="flex items-center gap-1.5">
             <span
               className="h-2 w-2 rounded-full"
-              style={{ background: "#7dfcd2" }}
+              style={{ background: "#ff4d6d" }}
             />
             person 1
           </span>
