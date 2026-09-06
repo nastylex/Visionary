@@ -20,6 +20,7 @@ type Metrics = {
   smile: number;
   blink: number;
   face: boolean;
+  faces: number;
 };
 
 const EMPTY: Metrics = {
@@ -29,15 +30,23 @@ const EMPTY: Metrics = {
   smile: 0,
   blink: 0,
   face: false,
+  faces: 0,
 };
 
+const MAX_FACES = 2;
 
-function shape(res: FaceLandmarkerResult, name: string) {
-  const cats = res.faceBlendshapes?.[0]?.categories;
+const PALETTE = [
+  { points: 0x7dfcd2, wire: 0x2ee6a8, lips: [1, 0.7, 0.48] as const },
+  { points: 0xc9a8ff, wire: 0x8f6bff, lips: [0.75, 0.55, 1] as const },
+];
+
+function shape(res: FaceLandmarkerResult, idx: number, name: string) {
+  const cats = res.faceBlendshapes?.[idx]?.categories;
   if (!cats) return 0;
   const c = cats.find((k) => k.categoryName === name);
   return c ? c.score : 0;
 }
+
 
 export default function HoloStudio() {
   const videoRef = useRef<HTMLVideoElement | null>(null);
