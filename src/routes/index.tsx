@@ -6,7 +6,7 @@ const HoloStudio = lazy(() => import("@/components/HoloStudio"));
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Volumetrix — Live Video to Real-Time 3D Reconstruction" },
+      { title: "Visionary — Live Video to Real-Time 3D Reconstruction" },
       {
         name: "description",
         content:
@@ -14,7 +14,7 @@ export const Route = createFileRoute("/")({
       },
       {
         property: "og:title",
-        content: "Volumetrix — Live Video to Real-Time 3D Reconstruction",
+        content: "Visionary — Live Video to Real-Time 3D Reconstruction",
       },
       {
         property: "og:description",
@@ -36,7 +36,7 @@ function Index() {
       <div className="relative mx-auto w-full max-w-6xl px-5 py-10 sm:px-8 sm:py-16">
         <header className="mb-8 sm:mb-12">
           <span className="font-mono text-[11px] uppercase tracking-[0.4em] text-accent">
-            Volumetrix · on-device neural capture
+            Visionary · on-device neural capture
           </span>
           <h1 className="mt-4 max-w-3xl text-3xl font-semibold leading-[1.08] tracking-tight text-foreground sm:text-5xl">
             Every frame of your video feed,{" "}
@@ -44,8 +44,8 @@ function Index() {
           </h1>
           <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted-foreground sm:text-base">
             A neural model reads the camera stream frame by frame and reconstructs
-            a live volumetric mesh — 478 facial vertices plus a full body
-            skeleton, with mouth movement and motion tracked in real time.
+            a live volumetric mesh — 478 facial vertices per face, with mouth
+            movement and motion tracked in real time.
           </p>
         </header>
 
